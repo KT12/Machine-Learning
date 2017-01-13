@@ -50,12 +50,14 @@ param_fixed = {
     'penalty': 'elasticnet',
 }
 param_grid = {
-    'alpha': [10 ** x for x in range(-5, 2)],
+    'alpha': [10 ** x for x in range(-5, 1)],
     'l1_ratio': [0, 0.05, 0.1, 0.2, 0.5, 0.8, 0.9, 0.95, 1],
 }
 
 
 # *Here is some [documentation](http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.SGDClassifier.html) regarding the classifier and hyperparameters*
+# 
+# *Here is some [documentation](http://scikit-learn.org/stable/modules/random_projection.html#gaussian-random-matrix) regarding random projection as a dimensionality reduction technique.*
 # 
 # *Here is some [information](https://ghr.nlm.nih.gov/gene/TP53) about TP53*
 
@@ -117,7 +119,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_
 
 # In[12]:
 
-transformer = GaussianRandomProjection() # num of components on auto
+transformer = GaussianRandomProjection(random_state=0) # num of components on auto
 
 
 # ## Define pipeline and Cross validation model fitting
@@ -134,7 +136,7 @@ warnings.filterwarnings('ignore', message='Changing the shape of non-C contiguou
 clf_grid = GridSearchCV(estimator=clf, param_grid=param_grid, n_jobs=-1, scoring='roc_auc')
 pipeline = make_pipeline(
     StandardScaler(),  # Feature scaling
-    transformer, # Dimensionality reduction via PCA
+    transformer, # Dimensionality reduction via random projection
     clf_grid)
 
 
@@ -152,7 +154,7 @@ scaled_X_train = StandardScaler().fit_transform(X_train, y_train)
 
 # In[16]:
 
-randomly_projected_X = GaussianRandomProjection().fit_transform(scaled_X_train)
+randomly_projected_X = GaussianRandomProjection(random_state=0).fit_transform(scaled_X_train)
 
 
 # In[17]:
